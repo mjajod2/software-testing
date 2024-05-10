@@ -116,11 +116,12 @@ int main()
             printf("ADC read error: Component failure detected\n");
         } 
 
-        // 400/11000
+        // to obtain illuminance values in lux
         double multiplier = 400.0/11000.0;
         double lux = optosensor_value * multiplier;
         // printf("%5f\n", lux);
 
+        // if too dark (based on a reference value and adjusted)
         if (lux < 400) {
             Garden_Lamp = 1;
             Servo_Curtain=1;
@@ -129,15 +130,16 @@ int main()
             Servo_Curtain = 0;
         }
        
+        // if car not detected
         if (Car_Sensor == 0) {
             ThisThread::sleep_for(1s);
             Garage_Door = 1;  // open garage door
-            ThisThread::sleep_for(4s);
+            ThisThread::sleep_for(4s); // door opening delay
             door_open_led = 1;
             door_closed_led = 0;
             pwm2.write (0.5);
             pwm2.period_ms(10);  // turn on lamp garage door
-            ThisThread::sleep_for(10s);
+            ThisThread::sleep_for(10s); // delay to keep the door open for a limited time
             Garage_Door = 0; 
             door_open_led = 0;
             door_closed_led = 1;
